@@ -62,21 +62,19 @@ Y_test <- read.table("./UCI HAR Dataset/test/y_test.txt", header = FALSE,
                      col.names = "activity")
 
 ################################################################################
-# combine X, subject and Y, then combine train and test to the fulldata
+# Combine X, subject and Y, then combine train and test to the fulldata
 X <- rbind(X_train, X_test)
-
-# add activity labels to Y
 Y <- rbind(Y_train, Y_test)
-#Y <- 
 
 fulldata <- cbind(X[, grep("mean|std", colnames(X))], 
                   Y, subject)
-#fulldata$activity_label<- as.factor(fulldata$activity_label)
 
 ################################################################################
-# average for each activity and each subject and write to working directory
+# Average for each activity and each subject and write to working directory
 library(plyr)
 finaldata <- ddply(fulldata, .(activity, subject), colwise(mean))
 finaldata2 <- merge(activity_labels, finaldata, by.x = "activity", 
                     by.y = "activity", all = TRUE)
+
+# Output the tidy data
 write.table(finaldata2[, -1], file ="finaldata.txt", row.names = FALSE)
